@@ -77,49 +77,56 @@
 require_once 'Validator.php';
 $validator = new Validator();
 
-$validator->addValidation('username', function($value) {
+$validator->addValidation('username', function ($value) {
     return !empty($value);
 }, 'Пожалуйста, введите ваше имя.');
 
-$validator->addValidation('question1', function($value) {
+$validator->addValidation('question1', function ($value) {
     return !empty($value);
 }, 'Пожалуйста, ответьте на вопрос 1.');
 
-$validator->addValidation('question2', function($value) {
+$validator->addValidation('question2', function ($value) {
     return !empty($value);
 }, 'Пожалуйста, ответьте на вопрос 2.');
 
-$validator->addValidation('question3', function($value) {
+$validator->addValidation('question3', function ($value) {
     return !empty($value);
 }, 'Пожалуйста, ответьте на вопрос 3.');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $data = [
-        'username' => $_POST['username'] ?? '',
-        'question1' => $_POST['question1'] ?? '',
-        'question2' => $_POST['question2'] ?? '',
-        'question3' => $_POST['question3'] ?? ''
-    ];
-    $errors = $validator->validateForm($data);
+$data = [
+    'username' => $_POST['username'] ?? '',
+    'question1' => $_POST['question1'] ?? '',
+    'question2' => $_POST['question2'] ?? '',
+    'question3' => $_POST['question3'] ?? ''
+];
+$errors = $validator->validateForm($data);
 
-    if (empty($errors)) {
-        echo "<h2>Результаты теста:</h2>";
-        echo "<p>Имя пользователя: {$data['username']}</p>";
-        echo "<p>Ответ на вопрос 1: {$data['question1']}</p>";
-        echo "<p>Ответ на вопрос 2: {$data['question2']}</p>";
-        echo "<p>Ответ на вопрос 3: {$data['question3']}</p>";
-    } else {
-        echo "<div class='container mt-5'>";
-        echo "<div class='alert alert-danger' role='alert'>";
-        echo "<ul>";
-        foreach ($errors as $fieldErrors) {
-            foreach ($fieldErrors as $error) {
-                echo "<li>$error</li>";
-            }
-        }
-        echo "</ul>";
-        echo "</div>";
-        echo "</div>";
-    }
-}
+if (empty($errors)) {
+    ?>
+    <h2>Результаты теста:</h2>
+
+    <p>Имя пользователя: <?php $data['username'] ?></p>
+    <p>Ответ на вопрос 1:<?php $data['question1'] ?></p>
+    <p>Ответ на вопрос 2:<?php $data['question2'] ?></p>
+    <p>Ответ на вопрос 3:<?php $data['question3'] ?></p>
+    <?php
+} else {
 ?>
+<div class='container mt-5'>
+    <div class='alert alert-danger' role='alert'>
+        <ul>
+            <?php
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    echo "<li>$error</li>";
+                }
+            }
+            ?>
+        </ul>
+    </div>
+</div>
+<?php
+}
+}
+

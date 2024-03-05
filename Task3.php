@@ -47,17 +47,17 @@
         <div class="form-group">
             <label for="name">Ваше имя:</label>
             <input name="name" type="text" class="form-control" id="name" placeholder="Введите ваше имя"
-                   value="<?php echo isset($_POST["name"]) ? $_POST["name"] : ''; ?>">
+                   value="<?php echo $_POST["name"] ?? ''; ?>">
         </div>
         <div class="form-group">
             <label for="email">Ваш email:</label>
             <input name="email" type="email" class="form-control" id="email" placeholder="Введите ваш email"
-                   value="<?php echo isset($_POST["email"]) ? $_POST["email"] : ''; ?>">
+                   value="<?php echo $_POST["email"] ?? ''; ?>">
         </div>
         <div class="form-group">
             <label for="comment">Ваш отзыв:</label>
             <textarea name="comment" class="form-control" id="comment"
-                      rows="3"><?php echo isset($_POST["comment"]) ? $_POST["comment"] : ''; ?></textarea>
+                      rows="3"><?php echo $_POST["comment"] ?? ''; ?></textarea>
         </div>
         <div class="form-check">
             <input name="agreement" type="checkbox" class="form-check-input"
@@ -85,20 +85,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = ValidateData($data);
     // Если нет ошибок, выводим сообщение об успешной отправке
     if (empty($errors)) {
-        echo "<div class='container mt-5'>";
-        echo "<div class='alert alert-success' role='alert'>Ваш отзыв успешно отправлен!</div>";
-        echo "</div>";
+        ?>
+        <div class='container mt-5'>
+            <div class='alert alert-success' role='alert'>Ваш отзыв успешно отправлен!</div>
+        </div>
+        <?php
     } else {
+        ?>
         // Выводим ошибки в формате списка
-        echo "<div class='container mt-5'>";
-        echo "<div class='alert alert-danger' role='alert'>";
-        echo "<ul>";
-        foreach ($errors as $error) {
-            echo "<li>$error</li>";
-        }
-        echo "</ul>";
-        echo "</div>";
-        echo "</div>";
+        <div class='container mt-5'>
+            <div class='alert alert-danger' role='alert'>
+                <ul>
+                    <?php
+                    foreach ($errors as $error) {
+                        echo "<li>$error</li>";
+                    }
+                    ?>
+                </ul>
+            </div>
+        </div>
+        <?php
     }
 }
 
@@ -147,4 +153,4 @@ function validateAgreement($agreement)
     }
 }
 
-?>
+
