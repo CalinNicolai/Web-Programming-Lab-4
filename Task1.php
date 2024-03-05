@@ -42,28 +42,14 @@
     </form>
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $nameError = testName($_POST["name"]);
-        $emailError = testEmail($_POST["email"]);
-        $reviewError = testReview($_POST["review"]);
-        $commentError = testComment($_POST["comment"]);
-
-        if ($nameError) {
-            echo "$nameError";
-            return;
-        }
-        if ($emailError) {
-            echo "$emailError";
-            return;
-        }
-        if ($reviewError) {
-            echo "$reviewError";
-            return;
-        }
-        if ($commentError) {
-            echo "$commentError";
-            return;
-        }
-        if (empty($nameError) && empty($emailError) && empty($reviewError) && empty($commentError)) {
+        $data = [
+            'name' => $_POST['name'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'review' => $_POST['review'] ?? '',
+            'comment' => $_POST['comment'] ?? ''
+        ];
+        $errors = testData($data);
+        if (empty($errors)) {
             ?>
             <div id="result">
                 <p>Ваше имя: <b><?php echo $_POST["name"] ?></b></p>
@@ -73,6 +59,13 @@
             </div>
             <?php
         }
+    }
+    function testData(&$data){
+        $errors[] = testName($data['name']);
+        $errors[] = testEmail($data['email']);
+        $errors[] = testReview($data['review']);
+        $errors[] = testComment($data['comment']);
+        return $errors;
     }
     function testName($name)
     {
@@ -85,7 +78,6 @@
             }
         }
     }
-
     function testEmail($email)
     {
         if (empty($email)) {
