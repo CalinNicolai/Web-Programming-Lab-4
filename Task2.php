@@ -42,15 +42,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $brand = $_POST["brand"];
     $year = $_POST["year"];
     $color = $_POST["color"];
-
-    echo "<div class='container mt-5'>";
-    echo "<h2>Результаты обзора машины:</h2>";
-    echo "<div class='card'>";
-    echo "<div class='card-body'>";
-    echo "<p class='card-text'><strong>Марка машины:</strong> $brand</p>";
-    echo "<p class='card-text'><strong>Год выпуска:</strong> $year</p>";
-    echo "<p class='card-text'><strong>Цвет:</strong> $color</p>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
+?>
+    <div class='container mt-5'>
+        <h2>Результаты обзора машины:</h2>
+        <div class='card'>
+            <div class='card-body'>
+                <?php
+                echo "<p class='card-text'><strong>Марка машины:</strong> $brand</p>";
+                echo "<p class='card-text'><strong>Год выпуска:</strong> $year</p>";
+                echo "<p class='card-text'><strong>Цвет:</strong> $color</p>";
+                ?>
+            </div>
+        </div>
+    </div>
+<?php
 }
+

@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#my-shop</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="">#my-shop</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -44,49 +46,43 @@
     <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="POST">
         <div class="form-group">
             <label for="name">Ваше имя:</label>
-            <input name="name" type="text" class="form-control" id="name" placeholder="Введите ваше имя" value="<?php echo isset($_POST["name"]) ? $_POST["name"] : ''; ?>">
+            <input name="name" type="text" class="form-control" id="name" placeholder="Введите ваше имя"
+                   value="<?php echo isset($_POST["name"]) ? $_POST["name"] : ''; ?>">
         </div>
         <div class="form-group">
             <label for="email">Ваш email:</label>
-            <input name="email" type="email" class="form-control" id="email" placeholder="Введите ваш email" value="<?php echo isset($_POST["email"]) ? $_POST["email"] : ''; ?>">
+            <input name="email" type="email" class="form-control" id="email" placeholder="Введите ваш email"
+                   value="<?php echo isset($_POST["email"]) ? $_POST["email"] : ''; ?>">
         </div>
         <div class="form-group">
             <label for="comment">Ваш отзыв:</label>
-            <textarea name="comment" class="form-control" id="comment" rows="3"><?php echo isset($_POST["comment"]) ? $_POST["comment"] : ''; ?></textarea>
+            <textarea name="comment" class="form-control" id="comment"
+                      rows="3"><?php echo isset($_POST["comment"]) ? $_POST["comment"] : ''; ?></textarea>
         </div>
         <div class="form-check">
-            <input name="agreement" type="checkbox" class="form-check-input" id="agree" <?php echo isset($_POST["agreement"]) ? 'checked' : ''; ?>>
+            <input name="agreement" type="checkbox" class="form-check-input"
+                   id="agree" <?php echo isset($_POST["agreement"]) ? 'checked' : ''; ?>>
             <label class="form-check-label" for="agree">Согласен на обработку данных</label>
         </div>
         <button type="submit" class="btn btn-primary">Отправить</button>
     </form>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 </html>
 
 <?php
-$errors = [];
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $comment = $_POST["comment"];
-    $agreement = isset($_POST["agreement"]);
-
-    // Валидация имени
-    validateName($errors, $name);
-    // Валидация email
-    validateEmail($errors, $email);
-    // Валидация комментария
-    validateComment($errors, $comment);
-
-    // Проверка согласия на обработку данных
-    if (!$agreement) {
-        $errors[] = "Подтвердите, что согласны на обработку данных.";
-    }
-
+    $data = [
+        'name' => $_POST['name'] ?? '',
+        'email' => $_POST['email'] ?? '',
+        'comment' => $_POST['comment'],
+        'agreement' => isset($_POST["agreement"]),
+    ];
+    $errors = ValidateData($data);
     // Если нет ошибок, выводим сообщение об успешной отправке
     if (empty($errors)) {
         echo "<div class='container mt-5'>";
@@ -106,28 +102,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-function validateName(array &$errors, $name): void
+function ValidateData(&$data): array
 {
-    if (empty($name) || strlen($name) < 3 || strlen($name) > 20 || preg_match('/\d/', $name)) {
-        $errors[] = "Некорректное имя. Имя должно содержать от 3 до 20 символов и не должно содержать цифр.";
-    }
+    $errors = [];
+    // Валидация имени
+    $errors[] = validateName($data["name"]) ?? '';
+    // Валидация email
+    $errors[] = validateEmail($data["email"]) ?? '';
+    // Валидация комментария
+    $errors[] = validateComment($data["comment"]) ?? '';
+    // Проверка согласия на обработку данных
+    $errors[] = validateAgreement($data['agreement']) ?? '';
+    return array_filter($errors);
 }
 
-function validateEmail(array &$errors, $email)
+function validateName($name)
+{
+    if (empty($name) || strlen($name) < 3 || strlen($name) > 20 || preg_match('/\d/', $name))
+        return "Некорректное имя. Имя должно содержать от 3 до 20 символов и не должно содержать цифр.";
+}
+
+function validateEmail($email)
 {
     if (empty($email)) {
-        $errors[] = "Вы должны указать Email";
+        return "Вы должны указать Email";
     } else {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "Неверный формат Email";
+            return "Неверный формат Email";
         }
     }
 }
 
-function validateComment(array &$errors, $comment)
+function validateComment($comment)
 {
     if (empty($comment)) {
-        $errors[] = "Вы должны написать комментарий";
+        return "Вы должны написать комментарий";
     }
 }
+
+function validateAgreement($agreement)
+{
+    if (!$agreement) {
+        return "Подтвердите, что согласны на обработку данных.";
+    }
+}
+
 ?>
